@@ -1,0 +1,85 @@
+#include<stdio.h>
+struct Data 
+{
+	char country[24]； 
+	int j, y, t;
+};
+void SwapData(struct Data* a, struct Data *b) 
+{
+	struct Data temp = *a;
+	*a = *b, *b = temp;
+}
+void SortData(struct Data *arr, int len) 
+{
+	for (int i = 0; i < len; i++) 
+	{
+		for (int j = i + 1; j < len; j++)
+		 {
+			if (arr[i].j > arr[j].j)
+				SwapData(&arr[i], &arr[j]);
+			else if (arr[i].j == arr[j].j) 
+			{
+				if (arr[i].y > arr[j].y)
+					SwapData(&arr[i], &arr[j]);
+				else if (arr[i].y == arr[j].y) 
+				{
+					if (arr[i].t > arr[j].t)
+						SwapData(&arr[i], &arr[j]);
+				}
+			}
+		}
+	}
+}
+int GetDataFromFlie(struct Data* arr,int len)
+{
+	FILE *fp = fopen("D:/data.txt","r"); 
+	int i=0;
+	if(fp == NULL)
+	{
+	printf("文件打开失败！\n");
+	return -1;
+	}
+	for(;i<len;i++)
+	{
+		fscanf(fp,"%s %d %d %d\n",arr[i].country,&arr[i].j,&arr[i].y,&arr[i].t);
+		if(feof(fp)) break;
+	}
+	fclose(fp); 
+	return i+1;
+}
+void PrintDataArr(struct Data* arr,int len)
+{
+	printf("|%-6s|%-6s|%-6s|%-6s|\n","国家","金牌数","银牌数","铜牌数"); 
+	for(int i=0;i<len;i++)
+	{
+		printf("|%-6s|%-6d|%-6d|%-6d|\n",arr[i].country,arr[i].j,arr[i].y,arr[i].t);
+	}
+}
+void SaveData(struct Data* arr,int len)
+{
+	FILE *fp = fopen("result.txt","w");
+	int i=0;
+	if(fp == NULL)
+	{
+	printf("文件操作失败！\n");
+	return;
+	}
+	for(;i<len;i++)
+	{
+		fprintf(fp,"%s %d %d %d\n",arr[i].country,arr[i].j,arr[i].y,arr[i].t);
+	}
+	fclose(fp);	
+} 
+int main() 
+{
+	struct Data arr[100];
+	int len = GetDataFromFlie(arr,sizeof(arr)/sizeof(struct Data));
+	printf("------------文件中读出来的数据------------\n");
+	PrintDataArr(arr,len);
+	SortData(arr,len);
+	printf("--------------排序后的数据----------------\n");
+	PrintDataArr(arr,len);
+	SaveData(arr,len); 
+	printf("--------------保存数据成功----------------\n");
+	return 0;
+}
